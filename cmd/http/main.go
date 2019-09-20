@@ -1,24 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"github.com/justericgg/go-rate-limit-test/pkg/handler"
 	"github.com/justericgg/go-rate-limit-test/pkg/ratelimiter"
 	"log"
 	"net/http"
-	"strconv"
-	"time"
 )
 
-var tokenBucket = ratelimiter.NewTokenBucket(60, 60)
+var limit = 10
+var limitSec = 30
+var ipLimiter = ratelimiter.NewIpLimiter(limit, limitSec)
 
 func main() {
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", handler.IpHandler(ipLimiter))
 
-		token := tokenBucket.Take(time.Now())
-		log.Println(token)
-		_, _ = fmt.Fprintf(w, strconv.Itoa(token))
-	})
-
+	log.Println("Server listening...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

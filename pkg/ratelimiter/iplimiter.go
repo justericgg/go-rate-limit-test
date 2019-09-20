@@ -32,3 +32,7 @@ func (ipL *IpLimiter) Take(ip string) int {
 
 	return token
 }
+
+func (ipL *IpLimiter) GetLimit() int {
+	return ipL.limit
+}

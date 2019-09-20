@@ -32,9 +32,8 @@ func (tb *TokenBucket) Take(t time.Time) int {
 		tb.Tokens = tb.RefillNum
 	}
 
-	preserveToken := tb.Tokens
-	if preserveToken == 0 {
-		return preserveToken
+	if tb.Tokens == 0 {
+		return -1
 	}
 	tb.Tokens = tb.Tokens - 1
 	tb.Last = t

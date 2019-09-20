@@ -33,13 +33,13 @@ func TestNewTokenBucket(t *testing.T) {
 }
 
 func TestBucketTake(t *testing.T) {
-	t.Run("When token is zero must return zero and do not minus one", func(t *testing.T) {
+	t.Run("When token is zero must return -1 and do not minus one", func(t *testing.T) {
 		tb := NewTokenBucket(0, 60)
 		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
 		r := tb.Take(takeTime)
-		expected := 0
+		expected := -1
 
-		if r != 0 {
+		if r != -1 {
 			t.Errorf("got %v, want %v", r, expected)
 		}
 
