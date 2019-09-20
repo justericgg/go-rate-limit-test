@@ -32,16 +32,19 @@ func TestNewTokenBucket(t *testing.T) {
 	}
 }
 
-func TestTake(t *testing.T) {
-	t.Run("When token is zero must return zero and not minus one", func(t *testing.T) {
+func TestBucketTake(t *testing.T) {
+	t.Run("When token is zero must return zero and do not minus one", func(t *testing.T) {
 		tb := NewTokenBucket(0, 60)
 		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
 		r := tb.Take(takeTime)
+		expected := 0
+
 		if r != 0 {
-			t.Errorf("got %v, want 0", r)
+			t.Errorf("got %v, want %v", r, expected)
 		}
+
 		if tb.Tokens < 0 {
-			t.Errorf("got %v, want 0", tb.Tokens)
+			t.Errorf("got %v, want %v", tb.Tokens, expected)
 		}
 	})
 
@@ -49,14 +52,29 @@ func TestTake(t *testing.T) {
 		tb := NewTokenBucket(1, 60)
 		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
 		r := tb.Take(takeTime)
-		if r != 1 {
-			t.Errorf("got %v, want 0", r)
+		expected := 0
+		if r != 0 {
+			t.Errorf("got %v, want %v", r, expected)
 		}
 		if tb.Tokens != 0 {
-			t.Errorf("got %v, want 0", tb.Tokens)
+			t.Errorf("got %v, want %v", tb.Tokens, expected)
 		}
 		if tb.Last != takeTime {
-			t.Errorf("got %v, want 0", tb.Last)
+			t.Errorf("got %v, want %v", tb.Last, expected)
+		}
+	})
+
+	t.Run("When none of tokens in the bucket but now is after 1 min from last taking time must fill the bucket", func(t *testing.T) {
+		tb := NewTokenBucket(60, 60)
+		tb.Tokens = 0
+		lastTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
+		tb.Last = lastTime
+		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:01:01")
+
+		r := tb.Take(takeTime)
+
+		if r != 59 {
+			t.Errorf("got %v, want %v", r, 59)
 		}
 	})
 }
