@@ -16,5 +16,5 @@ func main() {
 	http.HandleFunc("/", handler.IpHandler(ipLimiter))
 
 	log.Println("Server listening...")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
