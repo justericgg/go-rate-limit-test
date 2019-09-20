@@ -14,7 +14,7 @@ var ipLimiter = ratelimiter.NewIpLimiter(limit, limitSec)
 
 func main() {
 
-	http.HandleFunc("/", handler.IpHandler(ipLimiter))
+	http.HandleFunc("/rate-limit", handler.IpHandler(ipLimiter))
 
 	log.Println("Server listening...")
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
