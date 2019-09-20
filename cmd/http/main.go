@@ -5,6 +5,7 @@ import (
 	"github.com/justericgg/go-rate-limit-test/pkg/ratelimiter"
 	"log"
 	"net/http"
+	"os"
 )
 
 var limit = 10
@@ -16,5 +17,5 @@ func main() {
 	http.HandleFunc("/", handler.IpHandler(ipLimiter))
 
 	log.Println("Server listening...")
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
 }
