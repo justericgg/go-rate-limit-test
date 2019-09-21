@@ -21,8 +21,10 @@ WINDOW_TIME_SEC=60 // 這是時間區間
 
 可以將 header 中的 X-Forwarded-For 更改 ip 來做不同 ip 的 token 取得的測試
 
-> curl -X GET --header "X-Forwarded-For: 1.1.1.1" http://localhost:8080/rate-limit
-> curl -X GET --header "X-Forwarded-For: 1.1.1.2" http://localhost:8080/rate-limit
+```cassandraql
+curl -X GET --header "X-Forwarded-For: 1.1.1.1" http://localhost:8080/rate-limit
+curl -X GET --header "X-Forwarded-For: 1.1.1.2" http://localhost:8080/rate-limit
+```
 
 ### 直接 build or run
 
@@ -65,7 +67,7 @@ request 則顯示 Error
 
 ## 程式結構
 
-
+![image](https://github.com/justericgg/go-rate-limit-test/blob/master/assets/images/ratelimiter_diagram.png)
 
 ## 沒有考慮到的部分
 
