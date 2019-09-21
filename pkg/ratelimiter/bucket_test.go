@@ -22,11 +22,11 @@ func TestNewTokenBucket(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tb := NewTokenBucket(tt.args.tbNum, tt.args.limitSec)
-			if tb.Tokens != tt.args.tbNum {
-				t.Errorf("got %v, want %v", tb.Tokens, tt.args.tbNum)
+			if tb.tokens != tt.args.tbNum {
+				t.Errorf("got %v, want %v", tb.tokens, tt.args.tbNum)
 			}
-			if tb.LimitSec != tt.args.limitSec {
-				t.Errorf("got %v, want %v", tb.LimitSec, tt.args.limitSec)
+			if tb.windowTimeSec != tt.args.limitSec {
+				t.Errorf("got %v, want %v", tb.windowTimeSec, tt.args.limitSec)
 			}
 		})
 	}
@@ -43,8 +43,8 @@ func TestBucketTake(t *testing.T) {
 			t.Errorf("got %v, want %v", r, expected)
 		}
 
-		if tb.Tokens < 0 {
-			t.Errorf("got %v, want %v", tb.Tokens, expected)
+		if tb.tokens < 0 {
+			t.Errorf("got %v, want %v", tb.tokens, expected)
 		}
 	})
 
@@ -56,19 +56,19 @@ func TestBucketTake(t *testing.T) {
 		if r != 0 {
 			t.Errorf("got %v, want %v", r, expected)
 		}
-		if tb.Tokens != 0 {
-			t.Errorf("got %v, want %v", tb.Tokens, expected)
+		if tb.tokens != 0 {
+			t.Errorf("got %v, want %v", tb.tokens, expected)
 		}
-		if tb.Last != takeTime {
-			t.Errorf("got %v, want %v", tb.Last, expected)
+		if tb.last != takeTime {
+			t.Errorf("got %v, want %v", tb.last, expected)
 		}
 	})
 
 	t.Run("When none of tokens in the bucket but now is after 1 min from last taking time must fill the bucket", func(t *testing.T) {
 		tb := NewTokenBucket(60, 60)
-		tb.Tokens = 0
+		tb.tokens = 0
 		lastTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
-		tb.Last = lastTime
+		tb.last = lastTime
 		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:01:01")
 
 		r := tb.Take(takeTime)

@@ -6,16 +6,26 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
-var limit = 10
-var limitSec = 30
-var ipLimiter = ratelimiter.NewIpLimiter(limit, limitSec)
+func getEnv(key, def string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return def
+	}
+	return value
+}
+
+var port = getEnv("PORT", "80")
+var limit, _ = strconv.Atoi(getEnv("LIMIT", "60"))
+var windowTimeSec, _ = strconv.Atoi(getEnv("WINDOW_TIME_SEC", "60"))
+var ipLimiter = ratelimiter.NewIpLimiter(limit, windowTimeSec)
 
 func main() {
 
 	http.HandleFunc("/rate-limit", handler.IpHandler(ipLimiter))
 
-	log.Println("Server listening...")
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+	log.Println("Server start at " + port)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

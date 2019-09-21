@@ -6,20 +6,20 @@ import (
 )
 
 type TokenBucket struct {
-	mutex     *sync.RWMutex
-	Tokens    int
-	RefillNum int
-	Last      time.Time
-	LimitSec  int
+	mutex         *sync.RWMutex
+	tokens        int
+	refillNum     int
+	last          time.Time
+	windowTimeSec int
 }
 
-func NewTokenBucket(tbNum int, limitSec int) *TokenBucket {
+func NewTokenBucket(tbNum int, windowTimeSec int) *TokenBucket {
 	return &TokenBucket{
-		mutex:     &sync.RWMutex{},
-		Tokens:    tbNum,
-		RefillNum: tbNum,
-		Last:      time.Now(),
-		LimitSec:  limitSec,
+		mutex:         &sync.RWMutex{},
+		tokens:        tbNum,
+		refillNum:     tbNum,
+		last:          time.Now(),
+		windowTimeSec: windowTimeSec,
 	}
 }
 
@@ -28,15 +28,15 @@ func (tb *TokenBucket) Take(t time.Time) int {
 	tb.mutex.Lock()
 	defer tb.mutex.Unlock()
 
-	if tb.Last.Add(time.Duration(tb.LimitSec) * time.Second).Before(t) {
-		tb.Tokens = tb.RefillNum
+	if tb.last.Add(time.Duration(tb.windowTimeSec) * time.Second).Before(t) {
+		tb.tokens = tb.refillNum
 	}
 
-	if tb.Tokens == 0 {
+	if tb.tokens == 0 {
 		return -1
 	}
-	tb.Tokens = tb.Tokens - 1
-	tb.Last = t
+	tb.tokens = tb.tokens - 1
+	tb.last = t
 
-	return tb.Tokens
+	return tb.tokens
 }
