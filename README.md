@@ -63,6 +63,10 @@ request 則顯示 Error
 
 2. 建立 ip 的 map 來存放各 token bucket, 每個 request 進來的時候會在 bucket 內記錄最後取到 token 的時間, 當目前進來的時間 - 上次取 token 的時間超過 1分鐘的時候, 填充 token
 
+## Jmeter 測試第 61個 request 錯誤
+
+![image](https://github.com/justericgg/go-rate-limit-test/blob/master/assets/images/jmeter_result.png)
+
 選擇第二種做法
 
 ## 程式結構
