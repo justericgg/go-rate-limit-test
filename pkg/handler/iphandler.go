@@ -2,22 +2,15 @@ package handler
 
 import (
 	"fmt"
+	"github.com/justericgg/go-rate-limit-test/pkg/iptool"
 	"github.com/justericgg/go-rate-limit-test/pkg/ratelimiter"
-	"net"
 	"net/http"
 	"strconv"
 )
 
 func IpHandler(ipLimiter *ratelimiter.IpLimiter) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var ip string
-		cusIp := r.URL.Query().Get("ip")
-		if cusIp != "" {
-			ip = cusIp
-		} else {
-			ip, _, _ = net.SplitHostPort(r.RemoteAddr)
-		}
-
+		ip := iptool.ClientIP(r)
 		token := ipLimiter.Take(ip)
 
 		if token == -1 {
