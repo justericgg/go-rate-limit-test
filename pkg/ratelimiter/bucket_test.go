@@ -59,18 +59,15 @@ func TestBucketTake(t *testing.T) {
 		if tb.tokens != 0 {
 			t.Errorf("got %v, want %v", tb.tokens, expected)
 		}
-		if tb.last != takeTime {
-			t.Errorf("got %v, want %v", tb.last, expected)
-		}
 	})
 
-	t.Run("When none of tokens in the bucket but now is after 1 min from last taking time must fill the bucket", func(t *testing.T) {
+	t.Run("When none of tokens in the bucket but now is after 1 min from last fill time must fill the bucket", func(t *testing.T) {
 		tb := NewTokenBucket(60, 60)
 		tb.tokens = 0
 		lastTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:00:00")
-		tb.last = lastTime
-		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:01:01")
+		tb.lastFillTime = lastTime
 
+		takeTime, _ := time.Parse("2006-01-02 15:04:05", "2019-01-01 00:01:01")
 		r := tb.Take(takeTime)
 
 		if r != 59 {
