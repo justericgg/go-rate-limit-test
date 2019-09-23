@@ -49,7 +49,7 @@ request 則顯示 Error
 1. Leaky Bucket
 2. Token Bucket
 
-前者較適合做流速的控制, 後者適合做時間區段內量的控制, 故這邊選用後者來實作練習
+前者較適合做流速的控制, 後者適合做時間區段內量的控制(也可混用上述做流速控制), 故這邊選用後者來實作練習
 
 ## 程式說明
 
@@ -61,7 +61,7 @@ request 則顯示 Error
 
 > 而另一個問題是, 每個 ip 需要建立 1個 bucket 來計算, 是否會造成太多的 background job 而造成問題
 
-2. 建立 ip 的 map 來存放各 token bucket, 每個 request 進來的時候會在 bucket 內記錄最後取到 token 的時間, 當目前進來的時間 - 上次取 token 的時間超過 1分鐘的時候, 填充 token
+2. 建立 ip 的 map 來存放各 token bucket, 每個 request 進來的時候會在 bucket 內記錄填充 token 的時間, 當目前進來的時間 - 上次填充 token 的時間超過 1分鐘的時候, 填充 token
 
 選擇第二種做法
 
@@ -78,6 +78,7 @@ request 則顯示 Error
 以下為因為 Demo 沒有考慮到很細節的部分
 
 - 單純用一個 endpoint 來做 demo, 沒有實作在 middleware 中
+- 沒有控制 request 速率的問題
 - 沒有實作取到 token 後將 request proxy 到後面的 server 這段
 - ip 的 map 有可能會很久沒有相同的 ip request 再進來, 沒有特別做一個 background 做清理的動作
 - ip 的空間沒有仔細計算過單台機器是否存的下的問題, 若不行可能要考慮前面一台 HA 做分流
